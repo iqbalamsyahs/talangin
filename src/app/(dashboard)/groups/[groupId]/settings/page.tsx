@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ArrowLeft, Ghost, User } from "lucide-react";
 import Link from "next/link";
-import { AddMemberDialog } from "@/components/groups/add-member-dialog";
+import { AddMemberModal } from "@/components/groups/add-member-modal";
 
 interface PageProps {
     params: Promise<{ groupId: string }>;
@@ -58,7 +58,7 @@ export default async function GroupSettingsPage({ params }: PageProps) {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {/* Tombol Tambah Member (Dialog) */}
-                    <AddMemberDialog groupId={groupId} />
+                    <AddMemberModal groupId={groupId} />
 
                     {/* List Member */}
                     <div className="space-y-2 mt-4">

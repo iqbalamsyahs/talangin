@@ -49,7 +49,7 @@ export function SettleUpModal({ groupId, members }: { groupId: string, members: 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="outline" className="w-full border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800">
+                <Button variant="outline" className="w-full border-green-200 text-green-600 hover:bg-green-50 hover:text-green-800">
                     <Banknote className="w-4 h-4 mr-2" />
                     Catat Pelunasan
                 </Button>

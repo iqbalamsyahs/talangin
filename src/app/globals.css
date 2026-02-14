@@ -121,8 +121,25 @@
     @apply border-border outline-ring/50;
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     @apply bg-background text-foreground;
   }
+}
+
+/* Sembunyikan scrollbar tapi tetap bisa di-scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Agar tampilan mobile tidak memantul-mantul (overscroll behavior) */
+html,
+body {
+  overscroll-behavior-y: none;
 }

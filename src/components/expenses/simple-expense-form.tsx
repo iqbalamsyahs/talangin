@@ -63,14 +63,14 @@ export function SimpleExpenseForm({ groupId, members, mode }: { groupId: string,
         : 0;
 
     return (
-        <div className="space-y-6 pb-32">
+        <div className="space-y-6 pb-16">
             {/* 1. Detail Transaksi */}
             <Card>
                 <CardContent className="space-y-4">
                     <div className="flex flex-col gap-2">
                         <Label>Judul Transaksi</Label>
                         <Input
-                            placeholder="Contoh: Gorengan Sore"
+                            placeholder="Contoh: Gorengan Pagi"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             autoFocus
@@ -150,7 +150,7 @@ export function SimpleExpenseForm({ groupId, members, mode }: { groupId: string,
             </div>
 
             {/* 3. Footer Summary */}
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t shadow-lg z-50">
+            <div className="fixed bottom-16 left-0 right-0 p-4 bg-background border-t shadow-lg z-50 md:bottom-0">
                 <div className="container max-w-md mx-auto flex justify-between items-center gap-4">
                     <div className="flex flex-col">
                         <span className="text-xs text-muted-foreground">

@@ -37,9 +37,9 @@ export default async function DashboardPage() {
                     </p>
                 </div>
                 {/* Tombol Buat Grup (Nanti kita bikin fungsinya) */}
-                <Link href="/groups/create">
-                    <Button size="icon" className="rounded-full shadow-lg">
-                        <Plus className="w-5 h-5" />
+                <Link href="/groups/create" className="hidden md:flex">
+                    <Button size="sm" className="gap-2">
+                        <Plus className="w-4 h-4" /> Buat Grup
                     </Button>
                 </Link>
             </div>

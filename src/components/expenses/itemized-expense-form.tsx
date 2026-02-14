@@ -82,14 +82,14 @@ export function ItemizedExpenseForm({ groupId, members, mode }: ItemizedExpenseF
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 pb-16">
             {/* 1. Judul & Payer */}
             <Card>
                 <CardContent className="space-y-4">
                     <div className="flex flex-col gap-2">
                         <Label>Judul Transaksi</Label>
                         <Input
-                            placeholder="Contoh: Sate Senayan"
+                            placeholder="Contoh: Ayam Ria Rio"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                         />
@@ -135,7 +135,7 @@ export function ItemizedExpenseForm({ groupId, members, mode }: ItemizedExpenseF
             </Card>
 
             {/* 3. Item List (Dagingnya) */}
-            <div className="space-y-3 pb-12">
+            <div className="space-y-3">
                 <div className="flex justify-between items-center">
                     <Label>Rincian Pesanan</Label>
                     <Button variant="outline" size="sm" onClick={addItem}><Plus className="w-4 h-4 mr-1" /> Tambah Menu</Button>
@@ -207,7 +207,7 @@ export function ItemizedExpenseForm({ groupId, members, mode }: ItemizedExpenseF
             </div>
 
             {/* 4. Footer Summary & Save */}
-            <div className="fixed bottom-0 left-0 right-0 p-4 bg-background border-t shadow-lg">
+            <div className="fixed bottom-16 left-0 right-0 p-4 bg-background border-t shadow-lg md:bottom-0">
                 <div className="container max-w-md mx-auto flex justify-between items-center">
                     <div>
                         <p className="text-xs text-muted-foreground">Total Bayar</p>
@@ -218,9 +218,6 @@ export function ItemizedExpenseForm({ groupId, members, mode }: ItemizedExpenseF
                     </Button>
                 </div>
             </div>
-
-            {/* Spacer biar gak ketutup footer */}
-            {/* <div className="h-24"></div> */}
         </div>
     );
 }

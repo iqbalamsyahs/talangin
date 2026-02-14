@@ -5,7 +5,7 @@ import { eq, desc, and } from "drizzle-orm";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Plus, Settings, ChevronLeft } from "lucide-react";
+import { Plus, Settings, ChevronLeft, HandCoins } from "lucide-react";
 import { ExpenseCard } from "@/components/expenses/expense-card";
 import { calculateBalances } from "@/lib/balance";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -61,9 +61,9 @@ export default async function GroupDetailPage({ params, searchParams }: PageProp
     const balances = calculateBalances(groupData.members, expenseList, allSplits);
 
     return (
-        <main className="container max-w-md mx-auto p-4 pb-24 relative min-h-screen bg-gray-50/30">
+        <div className="container max-w-md mx-auto p-4 relative bg-gray-50/30">
             {/* --- HEADER --- */}
-            <div className="flex justify-between items-center mb-4 sticky top-0 bg-background/95 backdrop-blur py-2 z-10 border-b">
+            <div className="flex justify-between items-center mb-4 sticky top-0 backdrop-blur pb-2 z-10 border-b">
                 <div className="flex items-center gap-2">
                     <Link href="/">
                         <Button variant="ghost" size="icon" className="-ml-2">
@@ -113,9 +113,23 @@ export default async function GroupDetailPage({ params, searchParams }: PageProp
                 {/* TAB 2: SALDO MEMBER */}
                 <TabsContent value="balances" className="space-y-4">
                     {/* TOMBOL PELUNASAN DI ATAS LIST SALDO */}
-                    <div className="bg-green-50 p-4 rounded-lg border border-green-100 flex flex-col gap-2">
-                        <p className="text-sm text-green-800 font-medium">Ada utang yang sudah dibayar?</p>
-                        <SettleUpModal groupId={groupId} members={groupData.members} />
+                    <div className="bg-linear-to-br from-emerald-50 to-teal-50 p-6 rounded-xl border border-emerald-100 shadow-sm relative overflow-hidden">
+                        <div className="flex items-center gap-4 mb-4 relative z-10">
+                            <div className="bg-white/60 p-2.5 rounded-xl shadow-sm backdrop-blur-sm">
+                                <HandCoins className="w-6 h-6 text-emerald-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-emerald-900">Pelunasan Hutang</h3>
+                                <p className="text-sm text-emerald-700/80">Catat pembayaran yang sudah selesai.</p>
+                            </div>
+                        </div>
+                        <div className="relative z-10">
+                            <SettleUpModal groupId={groupId} members={groupData.members} />
+                        </div>
+
+                        {/* Decoration */}
+                        <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-emerald-100/50 rounded-full blur-2xl" />
+                        <div className="absolute -top-6 -right-6 w-32 h-32 bg-teal-100/30 rounded-full blur-3xl" />
                     </div>
 
                     <BalanceList members={groupData.members} balances={balances} />
@@ -124,13 +138,13 @@ export default async function GroupDetailPage({ params, searchParams }: PageProp
 
 
             {/* --- FLOATING ACTION BUTTON (FAB) --- */}
-            <div className="fixed bottom-6 right-4 md:right-[calc(50%-200px)]">
+            <div className="fixed bottom-20 right-4 md:right-[calc(50%-200px)] md:bottom-6">
                 <Link href={`/groups/${groupId}/add`}>
                     <Button size="icon" className="h-14 w-14 rounded-full shadow-xl bg-primary hover:bg-primary/90 transition-transform hover:scale-105">
                         <Plus className="w-8 h-8" />
                     </Button>
                 </Link>
             </div>
-        </main>
+        </div>
     );
 }

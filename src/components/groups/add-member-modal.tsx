@@ -9,7 +9,7 @@ import { UserPlus } from "lucide-react";
 import { addGhostMember } from "@/actions/members";
 import { useRouter } from "next/navigation";
 
-export function AddMemberDialog({ groupId }: { groupId: string }) {
+export function AddMemberModal({ groupId }: { groupId: string }) {
     const [open, setOpen] = useState(false);
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
