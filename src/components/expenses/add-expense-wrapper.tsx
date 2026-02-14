@@ -1,32 +1,40 @@
 "use client";
 
 import { useState } from "react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { SimpleExpenseForm } from "./simple-expense-form";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Member } from "@/types/expenses";
+
 import { ItemizedExpenseForm } from "./itemized-expense-form";
+import { SimpleExpenseForm } from "./simple-expense-form";
 
-interface Member {
-    id: string;
-    name: string;
-}
+export function AddExpenseWrapper({
+  groupId,
+  members,
+}: {
+  groupId: string;
+  members: Member[];
+}) {
+  const [mode, setMode] = useState<"SIMPLE" | "ITEMIZED">("SIMPLE");
 
-export function AddExpenseWrapper({ groupId, members }: { groupId: string, members: Member[] }) {
-    const [mode, setMode] = useState<'SIMPLE' | 'ITEMIZED'>("SIMPLE");
+  return (
+    <Tabs
+      defaultValue="SIMPLE"
+      className="w-full"
+      onValueChange={(value) => setMode(value as "SIMPLE" | "ITEMIZED")}
+    >
+      <TabsList className="mb-4 grid w-full grid-cols-2">
+        <TabsTrigger value="SIMPLE">Simple Split</TabsTrigger>
+        <TabsTrigger value="ITEMIZED">Detail Struk</TabsTrigger>
+      </TabsList>
 
-    return (
-        <Tabs defaultValue="SIMPLE" className="w-full" onValueChange={(value) => setMode(value as "SIMPLE" | "ITEMIZED")}>
-            <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="SIMPLE">Simple Split</TabsTrigger>
-                <TabsTrigger value="ITEMIZED">Detail Struk</TabsTrigger>
-            </TabsList>
+      <TabsContent value="SIMPLE">
+        <SimpleExpenseForm groupId={groupId} members={members} mode={mode} />
+      </TabsContent>
 
-            <TabsContent value="SIMPLE">
-                <SimpleExpenseForm groupId={groupId} members={members} mode={mode} />
-            </TabsContent>
-
-            <TabsContent value="ITEMIZED">
-                <ItemizedExpenseForm groupId={groupId} members={members} mode={mode} />
-            </TabsContent>
-        </Tabs>
-    );
+      <TabsContent value="ITEMIZED">
+        <ItemizedExpenseForm groupId={groupId} members={members} mode={mode} />
+      </TabsContent>
+    </Tabs>
+  );
 }
