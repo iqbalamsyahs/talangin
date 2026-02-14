@@ -9,31 +9,53 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { InputGroup, InputGroupAddon, InputGroupText, InputGroupInput } from "@/components/ui/input-group";
 import { Trash2, Plus } from "lucide-react";
 import { formatCurrency } from "@/lib/currency";
-import { createExpenseAction } from "@/actions/expenses"; // Server Action tadi
+import { createExpenseAction, updateExpenseAction } from "@/actions/expenses"; // Server Action tadi
+import { format } from "date-fns";
 
 interface Member {
     id: string;
     name: string;
 }
 
+interface ItemData { id: number; name: string; price: number | string; assignedTo: string; }
+
+interface InitialData {
+    expenseId: string;
+    description: string;
+    payerId: string;
+    tax: number;
+    discount: number;
+    items: ItemData[];
+    date?: Date;
+}
+
 interface ItemizedExpenseFormProps {
     groupId: string;
     members: Member[];
     mode: 'SIMPLE' | 'ITEMIZED';
+    initialData?: InitialData;
 }
 
-export function ItemizedExpenseForm({ groupId, members, mode }: ItemizedExpenseFormProps) {
-    const [description, setDescription] = useState("");
-    const [payerId, setPayerId] = useState(members[0]?.id || "");
+export function ItemizedExpenseForm({ groupId, members, mode, initialData }: ItemizedExpenseFormProps) {
+    const [description, setDescription] = useState(initialData?.description || "");
+    const [payerId, setPayerId] = useState(initialData?.payerId || members[0]?.id || "");
 
     // State untuk Angka-angka
-    const [tax, setTax] = useState<number | string>("");
-    const [discount, setDiscount] = useState<number | string>("");
+    const [tax, setTax] = useState<number | string>(initialData?.tax || "");
+    const [discount, setDiscount] = useState<number | string>(initialData?.discount || "");
+
+    const [date, setDate] = useState(
+        initialData?.date
+            ? format(initialData.date, "yyyy-MM-dd")
+            : format(new Date(), "yyyy-MM-dd")
+    );
 
     // State untuk List Item Makanan
-    const [items, setItems] = useState<{ id: number; name: string; price: number | string; assignedTo: string }[]>([
-        { id: 1, name: "", price: "", assignedTo: members[0]?.id || "" }
-    ]);
+    const [items, setItems] = useState<ItemData[]>(
+        initialData?.items || [
+            { id: 1, name: "", price: 0, assignedTo: members[0]?.id || "" }
+        ]
+    );
 
     // Helper: Tambah Baris Kosong
     const addItem = () => {
@@ -63,13 +85,14 @@ export function ItemizedExpenseForm({ groupId, members, mode }: ItemizedExpenseF
 
     // Handle Submit
     const handleSubmit = async () => {
-        // Panggil Server Action
-        await createExpenseAction({
+        const payloadDate = new Date(date);
+
+        const commonPayload = {
             mode,
             groupId,
             description,
             payerMemberId: payerId,
-            date: new Date(),
+            date: payloadDate,
             subtotal,
             tax: Number(tax),
             discount: Number(discount),
@@ -78,7 +101,16 @@ export function ItemizedExpenseForm({ groupId, members, mode }: ItemizedExpenseF
                 price: Number(i.price),
                 assignedTo: i.assignedTo
             }))
-        });
+        };
+
+        if (initialData) {
+            await updateExpenseAction({
+                ...commonPayload,
+                expenseId: initialData.expenseId,
+            });
+        } else {
+            await createExpenseAction(commonPayload);
+        }
     };
 
     return (
@@ -92,6 +124,14 @@ export function ItemizedExpenseForm({ groupId, members, mode }: ItemizedExpenseF
                             placeholder="Contoh: Ayam Ria Rio"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Label>Tanggal</Label>
+                        <Input
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
                         />
                     </div>
                     <div className="flex flex-col gap-2">

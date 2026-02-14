@@ -8,22 +8,44 @@ import { InputGroup, InputGroupAddon, InputGroupText, InputGroupInput } from "@/
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { createExpenseAction } from "@/actions/expenses";
+import { createExpenseAction, updateExpenseAction } from "@/actions/expenses";
 import { formatCurrency } from "@/lib/currency";
+import { format } from "date-fns";
 
 interface Member {
     id: string;
     name: string;
 }
 
-export function SimpleExpenseForm({ groupId, members, mode }: { groupId: string, members: Member[], mode: 'SIMPLE' | 'ITEMIZED' }) {
-    const [description, setDescription] = useState("");
-    const [amount, setAmount] = useState("");
-    const [payerId, setPayerId] = useState(members[0]?.id || "");
+interface InitialData {
+    expenseId: string;
+    description: string;
+    amount: number;
+    payerId: string;
+    selectedMemberIds: string[]; // Siapa yg kena split
+    date?: Date;
+}
+
+interface SimpleFormProps {
+    groupId: string;
+    members: Member[];
+    mode: 'SIMPLE' | 'ITEMIZED'
+    initialData?: InitialData; // <--- Tambah Prop Optional Ini
+}
+
+export function SimpleExpenseForm({ groupId, members, mode, initialData }: SimpleFormProps) {
+    const [description, setDescription] = useState(initialData?.description || "");
+    const [amount, setAmount] = useState(initialData?.amount.toString() || "");
+    const [payerId, setPayerId] = useState(initialData?.payerId || members[0]?.id || "");
+    const [date, setDate] = useState(
+        initialData?.date
+            ? format(initialData.date, "yyyy-MM-dd")
+            : format(new Date(), "yyyy-MM-dd")
+    );
 
     // Default: Semua member terpilih (biasanya kan bagi rata semua)
     const [selectedMembers, setSelectedMembers] = useState<string[]>(
-        members.map((m) => m.id)
+        initialData?.selectedMemberIds || members.map((m) => m.id)
     );
 
     const handleToggleMember = (memberId: string) => {
@@ -46,15 +68,30 @@ export function SimpleExpenseForm({ groupId, members, mode }: { groupId: string,
     const handleSubmit = async () => {
         if (!amount || Number(amount) <= 0) return;
 
-        await createExpenseAction({
-            mode,
-            groupId,
-            description,
-            payerMemberId: payerId,
-            date: new Date(),
-            totalAmount: Number(amount),
-            splitWithMemberIds: selectedMembers,
-        });
+        const payloadDate = new Date(date);
+
+        if (initialData) {
+            await updateExpenseAction({
+                mode,
+                expenseId: initialData.expenseId,
+                groupId,
+                description,
+                payerMemberId: payerId,
+                date: payloadDate,
+                totalAmount: Number(amount),
+                splitWithMemberIds: selectedMembers,
+            });
+        } else {
+            await createExpenseAction({
+                mode,
+                groupId,
+                description,
+                payerMemberId: payerId,
+                date: payloadDate,
+                totalAmount: Number(amount),
+                splitWithMemberIds: selectedMembers,
+            });
+        };
     };
 
     // Hitung per orang (Realtime preview)
@@ -74,6 +111,15 @@ export function SimpleExpenseForm({ groupId, members, mode }: { groupId: string,
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
                             autoFocus
+                        />
+                    </div>
+                    <div className="flex flex-col gap-2">
+                        <Label>Tanggal Transaksi</Label>
+                        <Input
+                            type="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            className="block w-full"
                         />
                     </div>
                     <div className="flex flex-col gap-2">

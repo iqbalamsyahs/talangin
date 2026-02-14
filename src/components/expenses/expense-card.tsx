@@ -3,8 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { format } from "date-fns";
 import { id } from "date-fns/locale"; // Bahasa Indonesia
 import { Receipt, ArrowRightLeft } from "lucide-react";
+import { ExpenseMenu } from "./expense-menu";
 
 interface ExpenseCardProps {
+    expenseId: string;
+    groupId: string;
+    isOwner: boolean;
     description: string;
     amount: number;
     payerName: string;
@@ -12,7 +16,7 @@ interface ExpenseCardProps {
     category: "EXPENSE" | "SETTLEMENT";
 }
 
-export function ExpenseCard({ description, amount, payerName, date, category }: ExpenseCardProps) {
+export function ExpenseCard({ expenseId, groupId, isOwner, description, amount, payerName, date, category }: ExpenseCardProps) {
     const isSettlement = category === "SETTLEMENT";
 
     return (
@@ -31,9 +35,13 @@ export function ExpenseCard({ description, amount, payerName, date, category }: 
                     </div>
                 </div>
 
-                {/* Kanan: Nominal */}
-                <div className={`font-bold ${isSettlement ? "text-green-600" : "text-gray-900"}`}>
-                    {formatCurrency(amount)}
+                {/* Kanan: Nominal & Menu */}
+                <div className="flex items-center gap-2">
+                    <div className={`font-bold ${isSettlement ? "text-green-600" : "text-gray-900"}`}>
+                        {formatCurrency(amount)}
+                    </div>
+
+                    <ExpenseMenu expenseId={expenseId} groupId={groupId} isOwner={isOwner} />
                 </div>
             </CardContent>
         </Card>

@@ -100,6 +100,9 @@ export default async function GroupDetailPage({ params, searchParams }: PageProp
                         expenseList.map((expense) => (
                             <ExpenseCard
                                 key={expense.id}
+                                expenseId={expense.id}
+                                groupId={groupId}
+                                isOwner={expense.createdBy === userId}
                                 description={expense.description}
                                 amount={expense.amount}
                                 payerName={expense.payer.name} // Nama dari tabel member
