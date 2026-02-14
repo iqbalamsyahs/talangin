@@ -22,9 +22,20 @@ const eslintConfig = defineConfig([
       prettier: prettierPlugin,
     },
     rules: {
-      "prettier/prettier": "error",
       "simple-import-sort/imports": "error",
       "simple-import-sort/exports": "error",
+      "prettier/prettier": [
+        "error",
+        {
+          plugins: ["prettier-plugin-tailwindcss"],
+          tabWidth: 2,
+          useTabs: false,
+          singleQuote: false,
+          semi: true,
+          trailingComma: "es5",
+          endOfLine: "lf",
+        },
+      ],
     },
   },
   eslintConfigPrettier,

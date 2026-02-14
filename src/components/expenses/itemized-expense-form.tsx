@@ -72,7 +72,12 @@ export function ItemizedExpenseForm({
   const addItem = () => {
     setItems([
       ...items,
-      { id: Date.now(), name: "", price: "", assignedTo: members[0]?.id || "" },
+      {
+        id: Date.now(),
+        name: "",
+        price: "",
+        assignedTo: members[0]?.id || "",
+      },
     ]);
   };
 

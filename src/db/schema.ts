@@ -138,7 +138,10 @@ export const expensesRelations = relations(expenses, ({ one, many }) => ({
     fields: [expenses.payerMemberId],
     references: [groupMembers.id],
   }),
-  creator: one(users, { fields: [expenses.createdBy], references: [users.id] }),
+  creator: one(users, {
+    fields: [expenses.createdBy],
+    references: [users.id],
+  }),
   items: many(expenseItems), // Relasi ke rincian item
   splits: many(expenseSplits), // Relasi ke hasil split
 }));
