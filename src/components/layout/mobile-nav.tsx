@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, PlusCircle } from "lucide-react";
+import { Home, PlusCircle, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -23,8 +23,12 @@ export function MobileNav() {
       icon: PlusCircle,
       active: pathname === "/groups/create",
     },
-    // Kalau nanti ada halaman profile sendiri, bisa tambah disini
-    // { label: "Profil", href: "/profile", icon: User, active: pathname === "/profile" },
+    {
+      label: "Akun",
+      href: "/profile",
+      icon: User,
+      active: pathname === "/profile",
+    },
   ];
 
   return (
