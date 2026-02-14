@@ -37,3 +37,9 @@ export interface SettlementInitialData {
   toId: string;
   date: Date;
 }
+
+export interface Settlement {
+  from: string;
+  to: string;
+  amount: number;
+}

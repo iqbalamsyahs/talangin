@@ -134,6 +134,7 @@ export async function createSettlement(data: {
   toMemberId: string; // Yang nerima duit
   amount: number;
   date: Date;
+  description?: string;
 }) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
@@ -144,7 +145,7 @@ export async function createSettlement(data: {
     .insert(expenses)
     .values({
       groupId: data.groupId,
-      description: "Pelunasan Utang", // Default description
+      description: data.description || "Pelunasan Utang", // Default description
       amount: data.amount,
       payerMemberId: data.fromMemberId, // Si Bayar Utang dianggap "Payer"
       createdBy: userId,

@@ -1,17 +1,19 @@
 import { auth } from "@clerk/nextjs/server";
 import { and, desc, eq } from "drizzle-orm";
-import { ChevronLeft, HandCoins, Plus, Settings } from "lucide-react";
+import { ChevronLeft, Plus, Settings } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ExpenseCard } from "@/components/expenses/expense-card";
-import { SettleUpModal } from "@/components/expenses/settle-up-modal";
 import { BalanceList } from "@/components/groups/balance-list";
+import { SettleUpCard } from "@/components/groups/settle-up-card";
+import { SettlementPlan } from "@/components/groups/settlement-plan";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { db } from "@/db";
 import { expenses, groupMembers, groups } from "@/db/schema";
 import { calculateBalances } from "@/lib/balance";
+import { getSuggestedSettlements } from "@/lib/settlement";
 
 // Next.js 15: params itu Promise, jadi harus ditunggu
 interface PageProps {
@@ -68,7 +70,11 @@ export default async function GroupDetailPage({
         : undefined,
   });
 
+  // 5. Hitung Saldo
   const balances = calculateBalances(groupData.members, expenseList, allSplits);
+
+  // 6. Hitung Saran Pelunasan (NEW)
+  const settlementPlan = getSuggestedSettlements(balances);
 
   return (
     <div className="relative container mx-auto max-w-md bg-gray-50/30 p-4">
@@ -132,28 +138,17 @@ export default async function GroupDetailPage({
         {/* TAB 2: SALDO MEMBER */}
         <TabsContent value="balances" className="space-y-4">
           {/* TOMBOL PELUNASAN DI ATAS LIST SALDO */}
-          <div className="relative overflow-hidden rounded-xl border border-emerald-100 bg-linear-to-br from-emerald-50 to-teal-50 p-6 shadow-sm">
-            <div className="relative z-10 mb-4 flex items-center gap-4">
-              <div className="rounded-xl bg-white/60 p-2.5 shadow-sm backdrop-blur-sm">
-                <HandCoins className="h-6 w-6 text-emerald-600" />
-              </div>
-              <div>
-                <h3 className="font-bold text-emerald-900">Pelunasan Hutang</h3>
-                <p className="text-sm text-emerald-700/80">
-                  Catat pembayaran yang sudah selesai.
-                </p>
-              </div>
-            </div>
-            <div className="relative z-10">
-              <SettleUpModal groupId={groupId} members={groupData.members} />
-            </div>
+          <div className="space-y-6">
+            <SettleUpCard
+              groupId={groupId}
+              members={groupData.members}
+              balances={balances}
+            />
 
-            {/* Decoration */}
-            <div className="absolute -right-6 -bottom-6 h-24 w-24 rounded-full bg-emerald-100/50 blur-2xl" />
-            <div className="absolute -top-6 -right-6 h-32 w-32 rounded-full bg-teal-100/30 blur-3xl" />
+            <BalanceList members={groupData.members} balances={balances} />
+
+            <SettlementPlan plan={settlementPlan} members={groupData.members} />
           </div>
-
-          <BalanceList members={groupData.members} balances={balances} />
         </TabsContent>
       </Tabs>
 
