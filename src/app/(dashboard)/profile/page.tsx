@@ -65,7 +65,7 @@ export default async function ProfilePage() {
         </SignOutButton>
 
         <p className="text-muted-foreground mt-6 text-center text-[10px]">
-          Talangin App v1.0.0
+          Cengli App v1.0.0
         </p>
       </div>
     </div>

@@ -14,7 +14,7 @@ export function Header() {
           <div className="bg-primary text-primary-foreground rounded-lg p-1.5">
             <Wallet className="h-4 w-4" />
           </div>
-          <span>Talangin</span>
+          <span>Cengli</span>
         </Link>
 
         {/* USER PROFILE (CLERK) */}
