@@ -1,10 +1,19 @@
 "use server";
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { eq, inArray } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { db } from "@/db";
-import { groupMembers, groups, users } from "@/db/schema"; // <--- Tambah import 'users'
+import {
+  expenseItems,
+  expenses,
+  expenseSplits,
+  groupMembers,
+  groups,
+  users,
+} from "@/db/schema"; // <--- Tambah import 'users'
 
 export async function createGroup(formData: FormData) {
   // 1. Cek Login & Ambil Data User Lengkap
@@ -63,5 +72,79 @@ export async function createGroup(formData: FormData) {
   }
 
   // Redirect harus di luar try-catch di Next.js action
+  redirect("/");
+}
+
+export async function updateGroupNameAction(groupId: string, newName: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  if (!newName || newName.trim().length === 0) {
+    return { error: "Nama grup tidak boleh kosong" };
+  }
+
+  // 1. Cek Validasi Owner
+  const group = await db.query.groups.findFirst({
+    where: eq(groups.id, groupId),
+  });
+
+  if (!group) return { error: "Grup tidak ditemukan" };
+  if (group.createdBy !== userId)
+    return { error: "Hanya pembuat grup yang bisa mengganti nama!" };
+
+  // 2. Update Database
+  await db.update(groups).set({ name: newName }).where(eq(groups.id, groupId));
+
+  // 3. Refresh Halaman
+  revalidatePath(`/groups/${groupId}`); // Refresh halaman grup
+  revalidatePath(`/groups/${groupId}/settings`); // Refresh halaman settings
+  revalidatePath("/"); // Refresh halaman home (list grup)
+
+  return { success: true };
+}
+
+export async function deleteGroupAction(groupId: string) {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+
+  // 1. Cek apakah user adalah Pemilik Grup (Optional: atau Admin)
+  const group = await db.query.groups.findFirst({
+    where: eq(groups.id, groupId),
+  });
+
+  if (!group) return { error: "Grup tidak ditemukan" };
+  if (group.createdBy !== userId)
+    return { error: "Hanya pembuat grup yang bisa menghapus ini!" };
+
+  // 2. AMBIL SEMUA EXPENSE ID (Penting buat hapus anak-anaknya)
+  const groupExpenses = await db.query.expenses.findMany({
+    where: eq(expenses.groupId, groupId),
+    columns: { id: true },
+  });
+
+  const expenseIds = groupExpenses.map((e) => e.id);
+
+  // 3. HAPUS DATA SECARA BERURUTAN (Dari Cucu -> Anak -> Induk)
+
+  // A. Hapus Item & Split (Cucu) kalau ada transaksinya
+  if (expenseIds.length > 0) {
+    await db
+      .delete(expenseItems)
+      .where(inArray(expenseItems.expenseId, expenseIds));
+    await db
+      .delete(expenseSplits)
+      .where(inArray(expenseSplits.expenseId, expenseIds));
+
+    // B. Hapus Transaksi (Anak)
+    await db.delete(expenses).where(inArray(expenses.id, expenseIds));
+  }
+
+  // C. Hapus Member Grup
+  await db.delete(groupMembers).where(eq(groupMembers.groupId, groupId));
+
+  // D. Terakhir: Hapus Grupnya (Induk Utama)
+  await db.delete(groups).where(eq(groups.id, groupId));
+
+  // 4. Balik ke Home
   redirect("/");
 }
