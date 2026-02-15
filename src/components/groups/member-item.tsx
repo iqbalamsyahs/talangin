@@ -39,7 +39,7 @@ export function MemberItem({ member, groupId, isOwner }: MemberItemProps) {
     const res = await deleteMemberAction(member.id, groupId);
     setLoading(false);
     if (res?.error) {
-      toast.success(res.error);
+      toast.error(res.error);
     } else {
       router.refresh(); // Refresh halaman biar member hilang dari list
     }

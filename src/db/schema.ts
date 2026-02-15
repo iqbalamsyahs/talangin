@@ -116,6 +116,14 @@ export const expenseSplits = pgTable("expense_splits", {
   isPaid: boolean("is_paid").default(false), // Penanda status (opsional)
 });
 
+// --- 7. CONTACTS (Daftar Teman) ---
+export const contacts = pgTable("contacts", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  ownerId: text("owner_id").notNull(), // ID User Kamu (Clerk)
+  name: text("name").notNull(), // Nama Teman (misal: "Udin")
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // --- RELATIONS (Untuk Drizzle Query API) ---
 
 export const groupsRelations = relations(groups, ({ one, many }) => ({

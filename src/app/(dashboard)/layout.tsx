@@ -1,5 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { Toaster } from "sonner";
 
 import { Header } from "@/components/layout/header";
 import { MobileNav } from "@/components/layout/mobile-nav";
@@ -26,6 +27,7 @@ export default async function DashboardLayout({
 
       {/* 3. Navigasi Bawah (Hanya muncul di Mobile lewat CSS md:hidden) */}
       <MobileNav />
+      <Toaster position="top-center" richColors />
     </div>
   );
 }
