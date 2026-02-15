@@ -124,6 +124,20 @@ export const contacts = pgTable("contacts", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// --- 8. INVITATIONS (Tiket Undangan) ---
+export const invitations = pgTable("invitations", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  token: text("token").notNull().unique(), // Kode unik tiket
+  groupId: uuid("group_id")
+    .notNull()
+    .references(() => groups.id, { onDelete: "cascade" }),
+  memberId: uuid("member_id")
+    .notNull()
+    .references(() => groupMembers.id, { onDelete: "cascade" }), // Tiket ini buat siapa?
+  usedAt: timestamp("used_at"), // Kapan tiket dipakai?
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // --- RELATIONS (Untuk Drizzle Query API) ---
 
 export const groupsRelations = relations(groups, ({ one, many }) => ({
@@ -172,6 +186,17 @@ export const expenseSplitsRelations = relations(expenseSplits, ({ one }) => ({
   }),
   member: one(groupMembers, {
     fields: [expenseSplits.memberId],
+    references: [groupMembers.id],
+  }),
+}));
+
+export const invitationsRelations = relations(invitations, ({ one }) => ({
+  group: one(groups, {
+    fields: [invitations.groupId],
+    references: [groups.id],
+  }),
+  member: one(groupMembers, {
+    fields: [invitations.memberId],
     references: [groupMembers.id],
   }),
 }));

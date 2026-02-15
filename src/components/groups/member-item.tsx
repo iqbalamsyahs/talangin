@@ -1,10 +1,11 @@
 "use client";
 
-import { Ghost, Trash2, User } from "lucide-react";
+import { Check, Ghost, Link2, Trash2, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { generateInviteLinkAction } from "@/actions/invitations";
 import { deleteMemberAction } from "@/actions/members";
 import {
   AlertDialog,
@@ -31,8 +32,22 @@ interface MemberItemProps {
 }
 
 export function MemberItem({ member, groupId, isOwner }: MemberItemProps) {
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopyLink = async () => {
+    // Panggil server action buat generate link baru
+    const result = await generateInviteLinkAction(member.id, groupId);
+
+    if (result.url) {
+      navigator.clipboard.writeText(result.url);
+      setCopied(true);
+      toast.success(`Link khusus untuk ${member.name} disalin!`);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
 
   const handleDelete = async () => {
     setLoading(true);
@@ -76,38 +91,55 @@ export function MemberItem({ member, groupId, isOwner }: MemberItemProps) {
       </div>
 
       {/* Tombol Hapus: Hanya muncul jika User Login adalah Owner Grup */}
-      {isOwner && (
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-muted-foreground hover:text-destructive h-8 w-8"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Hapus {member.name}?</AlertDialogTitle>
-              <AlertDialogDescription>
-                Pastikan member ini tidak memiliki transaksi (bayar/utang) di
-                grup ini. Jika ada, hapus dulu transaksinya.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Batal</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleDelete}
-                className="bg-destructive hover:bg-destructive/90"
-                disabled={loading}
+      <div className="flex gap-2">
+        {isOwner && !member.userId && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={handleCopyLink}
+            title="Salin Link Undangan Khusus"
+          >
+            {copied ? (
+              <Check className="h-4 w-4 text-green-500" />
+            ) : (
+              <Link2 className="h-4 w-4 text-blue-500" />
+            )}
+          </Button>
+        )}
+
+        {isOwner && (
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:text-destructive h-8 w-8"
               >
-                {loading ? "Menghapus..." : "Ya, Hapus"}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Hapus {member.name}?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Pastikan member ini tidak memiliki transaksi (bayar/utang) di
+                  grup ini. Jika ada, hapus dulu transaksinya.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Batal</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-destructive hover:bg-destructive/90"
+                  disabled={loading}
+                >
+                  {loading ? "Menghapus..." : "Ya, Hapus"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+      </div>
     </div>
   );
 }
