@@ -1,12 +1,11 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { and, eq } from "drizzle-orm";
-import { nanoid } from "nanoid"; // Install dulu: pnpm add nanoid
-import { redirect } from "next/navigation";
+import { eq } from "drizzle-orm";
+import { nanoid } from "nanoid";
 
 import { db } from "@/db";
-import { groupMembers, groups, invitations } from "@/db/schema";
+import { groupMembers, invitations } from "@/db/schema";
 
 // 1. GENERATE LINK (Dipanggil Admin)
 export async function generateInviteLinkAction(
