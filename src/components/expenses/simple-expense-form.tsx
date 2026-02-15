@@ -1,5 +1,3 @@
-"use client";
-
 import { format } from "date-fns";
 import { useState } from "react";
 
@@ -22,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { formatCurrency } from "@/lib/currency";
 import { Member, SimpleExpenseInitialData } from "@/types/expenses";
 
@@ -29,7 +28,7 @@ interface SimpleFormProps {
   groupId: string;
   members: Member[];
   mode: "SIMPLE" | "ITEMIZED";
-  initialData?: SimpleExpenseInitialData; // <--- Tambah Prop Optional Ini
+  initialData?: SimpleExpenseInitialData;
 }
 
 export function SimpleExpenseForm({
@@ -51,7 +50,7 @@ export function SimpleExpenseForm({
       : format(new Date(), "yyyy-MM-dd")
   );
 
-  // Default: Semua member terpilih (biasanya kan bagi rata semua)
+  // Default: Semua member terpilih
   const [selectedMembers, setSelectedMembers] = useState<string[]>(
     initialData?.selectedMemberIds || members.map((m) => m.id)
   );
@@ -64,16 +63,15 @@ export function SimpleExpenseForm({
     }
   };
 
-  // Helper: Pilih Semua / Hapus Semua
   const toggleSelectAll = () => {
     if (selectedMembers.length === members.length) {
-      setSelectedMembers([]); // Uncheck all
+      setSelectedMembers([]);
     } else {
-      setSelectedMembers(members.map((m) => m.id)); // Check all
+      setSelectedMembers(members.map((m) => m.id));
     }
   };
 
-  const handleSubmit = async () => {
+  const formAction = async () => {
     if (!amount || Number(amount) <= 0) return;
 
     const payloadDate = new Date(date);
@@ -98,20 +96,20 @@ export function SimpleExpenseForm({
     }
   };
 
-  // Hitung per orang (Realtime preview)
   const splitAmount =
     selectedMembers.length > 0
       ? Math.round(Number(amount) / selectedMembers.length)
       : 0;
 
   return (
-    <div className="space-y-6 pb-16">
+    <form action={formAction} className="space-y-6 pb-40">
       {/* 1. Detail Transaksi */}
       <Card>
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-2">
             <Label>Judul Transaksi</Label>
             <Input
+              name="description"
               placeholder="Contoh: Gorengan Pagi"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -122,6 +120,7 @@ export function SimpleExpenseForm({
             <Label>Tanggal Transaksi</Label>
             <Input
               type="date"
+              name="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
               className="block w-full"
@@ -135,6 +134,7 @@ export function SimpleExpenseForm({
               </InputGroupAddon>
               <InputGroupInput
                 type="number"
+                name="amount"
                 placeholder="0"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
@@ -143,7 +143,7 @@ export function SimpleExpenseForm({
           </div>
           <div className="flex flex-col gap-2">
             <Label>Siapa yang nalangin?</Label>
-            <Select value={payerId} onValueChange={setPayerId}>
+            <Select value={payerId} onValueChange={setPayerId} name="payerId">
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Pilih yang nalangin" />
               </SelectTrigger>
@@ -164,6 +164,7 @@ export function SimpleExpenseForm({
         <div className="flex items-center justify-between px-1">
           <Label>Dibagi ke siapa aja?</Label>
           <Button
+            type="button"
             variant="ghost"
             size="sm"
             className="text-primary h-8 text-xs"
@@ -218,15 +219,15 @@ export function SimpleExpenseForm({
               Total {formatCurrency(Number(amount))}
             </span>
           </div>
-          <Button
-            onClick={handleSubmit}
+          <SubmitButton
             disabled={!description || !amount || selectedMembers.length === 0}
             size="lg"
+            className="shadow-primary/20 hover:shadow-primary/30 h-11 text-base font-medium shadow-lg transition-all"
           >
-            Simpan Transaksi
-          </Button>
+            {initialData ? "Simpan Perubahan" : "Simpan Transaksi"}
+          </SubmitButton>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

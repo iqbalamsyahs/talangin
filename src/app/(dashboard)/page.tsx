@@ -46,7 +46,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* List Grup */}
-      <div className="space-y-4">
+      <div className="flex flex-col space-y-4">
         {userGroups.length === 0 ? (
           // Empty State (Kalau belum punya grup)
           <div className="bg-muted/30 rounded-xl border-2 border-dashed py-10 text-center">

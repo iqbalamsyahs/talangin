@@ -113,7 +113,7 @@ export function SettleUpModal({
           Catat Pelunasan
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Catat Pelunasan</DialogTitle>
           <DialogDescription>

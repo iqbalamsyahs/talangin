@@ -29,6 +29,8 @@ import {
   Member,
 } from "@/types/expenses";
 
+import { SubmitButton } from "../ui/submit-button";
+
 interface ItemizedExpenseFormProps {
   groupId: string;
   members: Member[];
@@ -105,8 +107,8 @@ export function ItemizedExpenseForm({
   );
   const totalAkhir = subtotal + Number(tax) - Number(discount);
 
-  // Handle Submit
-  const handleSubmit = async () => {
+  // Handle Submit (Server Action Wrapper)
+  const formAction = async () => {
     const payloadDate = new Date(date);
 
     const commonPayload = {
@@ -136,13 +138,14 @@ export function ItemizedExpenseForm({
   };
 
   return (
-    <div className="space-y-6 pb-16">
+    <form action={formAction} className="space-y-6 pb-48">
       {/* 1. Judul & Payer */}
       <Card>
         <CardContent className="space-y-4">
           <div className="flex flex-col gap-2">
             <Label>Judul Transaksi</Label>
             <Input
+              name="description"
               placeholder="Contoh: Ayam Ria Rio"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -152,13 +155,14 @@ export function ItemizedExpenseForm({
             <Label>Tanggal</Label>
             <Input
               type="date"
+              name="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
             />
           </div>
           <div className="flex flex-col gap-2">
             <Label>Siapa yang nalangin?</Label>
-            <Select value={payerId} onValueChange={setPayerId}>
+            <Select value={payerId} onValueChange={setPayerId} name="payerId">
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Pilih yang nalangin" />
               </SelectTrigger>
@@ -185,6 +189,7 @@ export function ItemizedExpenseForm({
               </InputGroupAddon>
               <InputGroupInput
                 type="number"
+                name="tax"
                 placeholder="0"
                 value={tax}
                 onChange={(e) => setTax(e.target.value)}
@@ -199,6 +204,7 @@ export function ItemizedExpenseForm({
               </InputGroupAddon>
               <InputGroupInput
                 type="number"
+                name="discount"
                 placeholder="0"
                 value={discount}
                 onChange={(e) => setDiscount(e.target.value)}
@@ -212,7 +218,7 @@ export function ItemizedExpenseForm({
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <Label>Rincian Pesanan</Label>
-          <Button variant="outline" size="sm" onClick={addItem}>
+          <Button type="button" variant="outline" size="sm" onClick={addItem}>
             <Plus className="mr-1 h-4 w-4" /> Tambah Menu
           </Button>
         </div>
@@ -232,6 +238,7 @@ export function ItemizedExpenseForm({
                   />
                 </div>
                 <Button
+                  type="button"
                   variant="ghost"
                   size="icon"
                   className="text-destructive mt-6 h-8 w-8 shrink-0"
@@ -295,15 +302,15 @@ export function ItemizedExpenseForm({
             <p className="text-muted-foreground text-xs">Total Bayar</p>
             <p className="text-xl font-bold">{formatCurrency(totalAkhir)}</p>
           </div>
-          <Button
+          <SubmitButton
             size="lg"
-            onClick={handleSubmit}
             disabled={totalAkhir <= 0 || !description}
+            className="shadow-primary/20 hover:shadow-primary/30 h-11 text-base font-medium shadow-lg transition-all"
           >
-            Simpan Transaksi
-          </Button>
+            {initialData ? "Simpan Perubahan" : "Simpan Transaksi"}
+          </SubmitButton>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

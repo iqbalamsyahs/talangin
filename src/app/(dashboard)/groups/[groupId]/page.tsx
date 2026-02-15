@@ -53,7 +53,7 @@ export default async function GroupDetailPage({
   // 3. Ambil Daftar Transaksi (Expenses)
   const expenseList = await db.query.expenses.findMany({
     where: eq(expenses.groupId, groupId),
-    orderBy: [desc(expenses.date)],
+    orderBy: [desc(expenses.date), desc(expenses.createdAt)],
     with: { payer: true },
   });
 
