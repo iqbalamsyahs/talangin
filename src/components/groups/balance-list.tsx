@@ -22,9 +22,9 @@ export function BalanceList({ members, balances }: BalanceListProps) {
   );
 
   return (
-    <Card className="h-full gap-2 border-slate-200 bg-slate-50/50 shadow-none md:border md:shadow-sm">
+    <Card className="dark:border-border dark:bg-muted/20 h-full gap-2 border-slate-200 bg-slate-50/50 shadow-none md:border md:shadow-sm">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-bold tracking-wider text-slate-800 uppercase">
+        <CardTitle className="dark:text-muted-foreground text-sm font-bold tracking-wider text-slate-800 uppercase">
           Status Saldo
         </CardTitle>
       </CardHeader>
@@ -45,7 +45,7 @@ export function BalanceList({ members, balances }: BalanceListProps) {
           return (
             <div
               key={member.id}
-              className="relative flex items-center justify-between rounded-lg border border-slate-100 bg-white px-4 py-4 shadow-sm hover:bg-slate-50/50 md:px-6"
+              className="dark:border-border dark:bg-card dark:hover:bg-accent/50 relative flex items-center justify-between rounded-lg border border-slate-100 bg-white px-4 py-4 shadow-sm hover:bg-slate-50/50 md:px-6"
             >
               {/* Background Bar Visual */}
               {!isSettled && (

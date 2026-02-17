@@ -15,14 +15,16 @@ export function SettleUpCard({
   balances,
 }: SettleUpCardProps) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-emerald-100 bg-linear-to-br from-emerald-50 to-teal-50 p-6 shadow-sm">
+    <div className="relative overflow-hidden rounded-xl border border-emerald-100 bg-linear-to-br from-emerald-50 to-teal-50 p-6 shadow-sm dark:border-emerald-900/50 dark:from-emerald-950/30 dark:to-teal-950/30">
       <div className="relative z-10 mb-4 flex items-center gap-4">
-        <div className="rounded-xl bg-white/60 p-2.5 shadow-sm backdrop-blur-sm">
-          <HandCoins className="h-6 w-6 text-emerald-600" />
+        <div className="rounded-xl bg-white/60 p-2.5 shadow-sm backdrop-blur-sm dark:bg-emerald-950/50">
+          <HandCoins className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
         </div>
         <div>
-          <h3 className="font-bold text-emerald-900">Pelunasan Hutang</h3>
-          <p className="text-sm text-emerald-700/80">
+          <h3 className="font-bold text-emerald-900 dark:text-emerald-100">
+            Pelunasan Hutang
+          </h3>
+          <p className="text-sm text-emerald-700/80 dark:text-emerald-400/80">
             Catat pembayaran yang sudah selesai.
           </p>
         </div>
@@ -36,8 +38,8 @@ export function SettleUpCard({
       </div>
 
       {/* Decoration */}
-      <div className="absolute -right-6 -bottom-6 h-24 w-24 rounded-full bg-emerald-100/50 blur-2xl" />
-      <div className="absolute -top-6 -right-6 h-32 w-32 rounded-full bg-teal-100/30 blur-3xl" />
+      <div className="absolute -right-6 -bottom-6 h-24 w-24 rounded-full bg-emerald-100/50 blur-2xl dark:bg-emerald-500/10" />
+      <div className="absolute -top-6 -right-6 h-32 w-32 rounded-full bg-teal-100/30 blur-3xl dark:bg-teal-500/10" />
     </div>
   );
 }

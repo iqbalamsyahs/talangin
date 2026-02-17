@@ -77,7 +77,7 @@ export default async function GroupDetailPage({
   const settlementPlan = getSuggestedSettlements(balances);
 
   return (
-    <div className="relative container mx-auto max-w-md bg-gray-50/30 p-4">
+    <div className="relative container mx-auto max-w-md p-4">
       {/* --- HEADER --- */}
       <div className="sticky top-0 z-10 mb-4 flex items-center justify-between border-b pb-2 backdrop-blur">
         <div className="flex items-center gap-2">

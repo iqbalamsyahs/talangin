@@ -2,6 +2,15 @@ import "./globals.css";
 
 import { ClerkProvider } from "@clerk/nextjs";
 import { Metadata, Viewport } from "next";
+import { Poppins } from "next/font/google";
+
+import { ThemeProvider } from "@/components/themes/theme-provider";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  variable: "--font-poppins",
+  weight: "400",
+});
 
 export const metadata: Metadata = {
   title: "Cengli - Bagi Tagihan Tanpa Ribet",
@@ -22,8 +31,17 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en">
-        <body>{children}</body>
+      <html lang="id" suppressHydrationWarning>
+        <body className={`${poppins.variable} antialiased`}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </body>
       </html>
     </ClerkProvider>
   );

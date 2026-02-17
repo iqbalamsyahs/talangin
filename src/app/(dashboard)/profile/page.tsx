@@ -3,6 +3,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { LogOut, Mail, User as UserIcon } from "lucide-react";
 import { redirect } from "next/navigation";
 
+import { ThemeSelector } from "@/components/themes/theme-selector";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -44,10 +45,12 @@ export default async function ProfilePage() {
         </CardContent>
       </Card>
 
+      {/* Area Pengaturan Tampilan */}
+      <ThemeSelector />
       {/* Area Statistik (Placeholder Masa Depan) */}
       <Card className="bg-muted/30 border-dashed">
         <CardContent className="text-muted-foreground p-6 text-center text-sm">
-          <p>Fitur Statistik & Tema Gelap (Dark Mode)</p>
+          <p>Fitur Statistik Keuangan</p>
           <p>Segera Hadir...</p>
         </CardContent>
       </Card>

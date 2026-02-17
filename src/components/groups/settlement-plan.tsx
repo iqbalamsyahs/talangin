@@ -18,9 +18,9 @@ export function SettlementPlan({
     members.find((m) => m.id === id)?.name || "Unknown";
 
   return (
-    <Card className="mt-6 gap-2 border-orange-200 bg-orange-50/50">
+    <Card className="mt-6 gap-2 border-orange-200 bg-orange-50/50 dark:border-orange-900/50 dark:bg-orange-950/10">
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-bold tracking-wider text-orange-800 uppercase">
+        <CardTitle className="text-sm font-bold tracking-wider text-orange-800 uppercase dark:text-orange-200/80">
           Saran Pelunasan
         </CardTitle>
       </CardHeader>
@@ -28,7 +28,7 @@ export function SettlementPlan({
         {plan.map((item, idx) => (
           <div
             key={idx}
-            className="flex items-center justify-between rounded-lg border border-orange-100 bg-white p-3 shadow-sm"
+            className="dark:border-border dark:bg-card flex items-center justify-between rounded-lg border border-orange-100 bg-white p-3 shadow-sm"
           >
             {/* Sisi Kiri: Siapa ke Siapa */}
             <div className="flex items-center gap-2 text-sm">
