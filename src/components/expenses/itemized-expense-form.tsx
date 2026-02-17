@@ -152,7 +152,7 @@ export function ItemizedExpenseForm({
             />
           </div>
           <div className="flex flex-col gap-2">
-            <Label>Tanggal</Label>
+            <Label>Tanggal Transaksi</Label>
             <Input
               type="date"
               name="date"

@@ -42,7 +42,7 @@ export default async function EditExpensePage({ params }: PageProps) {
   const isItemized = expense.items.length > 0;
 
   return (
-    <div className="container mx-auto min-h-screen max-w-md bg-gray-50/50 p-4">
+    <div className="container mx-auto min-h-screen max-w-md p-4">
       <div className="mb-6 flex items-center gap-2">
         <Link href={`/groups/${groupId}`}>
           <ArrowLeft className="h-6 w-6 text-gray-700" />

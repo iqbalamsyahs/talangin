@@ -15,6 +15,13 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Member, SettlementInitialData } from "@/types/expenses";
 
 interface EditSettlementProps {
@@ -79,34 +86,36 @@ export function EditSettlementForm({
           <div className="flex items-center justify-between gap-2">
             <div className="flex-1 space-y-2">
               <Label>Yang Bayar</Label>
-              <select
-                className="bg-background flex h-10 w-full rounded-md border px-3 text-sm"
-                value={fromId}
-                onChange={(e) => setFromId(e.target.value)}
-              >
-                {members.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name}
-                  </option>
-                ))}
-              </select>
+              <Select value={fromId} onValueChange={setFromId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih yang bayar" />
+                </SelectTrigger>
+                <SelectContent>
+                  {members.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <ArrowRight className="text-muted-foreground mt-8 h-5 w-5" />
 
             <div className="flex-1 space-y-2">
               <Label>Penerima</Label>
-              <select
-                className="bg-background flex h-10 w-full rounded-md border px-3 text-sm"
-                value={toId}
-                onChange={(e) => setToId(e.target.value)}
-              >
-                {members.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.name}
-                  </option>
-                ))}
-              </select>
+              <Select value={toId} onValueChange={setToId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih penerima" />
+                </SelectTrigger>
+                <SelectContent>
+                  {members.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
