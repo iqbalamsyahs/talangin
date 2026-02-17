@@ -1,11 +1,11 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
 import { db } from "@/db";
-import { groupMembers, invitations } from "@/db/schema";
+import { groupMembers, invitations, users } from "@/db/schema";
 
 // 1. GENERATE LINK (Dipanggil Admin)
 export async function generateInviteLinkAction(
@@ -51,11 +51,35 @@ export async function acceptInviteAction(token: string) {
   if (!invite) return { error: "Link tidak valid / kadaluarsa." };
   if (invite.usedAt) return { error: "Link ini sudah pernah dipakai." };
 
+  // --- FIX: Sinkronisasi User ke Database (Penting!) ---
+  // Pastikan User yang klik ini sudah ada di tabel 'users',
+  // kalau belum, insert dulu. Kalau sudah, update datanya.
+  // Ini supaya tidak error Foreign Key di tabel groupMembers.
+  const user = await currentUser();
+  if (!user) return { error: "Data user tidak ditemukan CLERK." };
+
+  await db
+    .insert(users)
+    .values({
+      id: userId,
+      name: user.firstName || user.fullName || "User",
+      email: user.emailAddresses[0]?.emailAddress || "no-email",
+      avatarUrl: user.imageUrl,
+    })
+    .onConflictDoUpdate({
+      target: users.id,
+      set: {
+        name: user.firstName || user.fullName || "User",
+        avatarUrl: user.imageUrl,
+      },
+    });
+  // ------------------------------------------------
+
   // PROSES PERJODOHAN (MERGE)
   // Update member manual (invite.memberId) dengan User ID yang login sekarang
   await db
     .update(groupMembers)
-    .set({ userId: userId }) // <--- INI KUNCINYA
+    .set({ userId: userId }) // Sekarang aman
     .where(eq(groupMembers.id, invite.memberId));
 
   // Tandai tiket sudah dipakai

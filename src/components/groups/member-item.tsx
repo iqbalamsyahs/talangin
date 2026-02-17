@@ -18,7 +18,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 interface MemberItemProps {
@@ -26,12 +26,21 @@ interface MemberItemProps {
     id: string;
     userId: string | null;
     name: string;
+    user?: {
+      avatarUrl: string | null;
+    } | null;
   };
   groupId: string;
-  isOwner: boolean; // Cek apakah user yg login adalah owner grup
+  isOwner: boolean;
+  isMe?: boolean;
 }
 
-export function MemberItem({ member, groupId, isOwner }: MemberItemProps) {
+export function MemberItem({
+  member,
+  groupId,
+  isOwner,
+  isMe,
+}: MemberItemProps) {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -56,7 +65,7 @@ export function MemberItem({ member, groupId, isOwner }: MemberItemProps) {
     if (res?.error) {
       toast.error(res.error);
     } else {
-      router.refresh(); // Refresh halaman biar member hilang dari list
+      router.refresh();
     }
   };
 
@@ -64,6 +73,7 @@ export function MemberItem({ member, groupId, isOwner }: MemberItemProps) {
     <div className="bg-muted/20 flex items-center justify-between rounded-lg border p-3">
       <div className="flex items-center gap-3">
         <Avatar className="h-9 w-9 border">
+          <AvatarImage src={member.user?.avatarUrl || ""} alt={member.name} />
           <AvatarFallback
             className={
               member.userId
@@ -75,7 +85,12 @@ export function MemberItem({ member, groupId, isOwner }: MemberItemProps) {
           </AvatarFallback>
         </Avatar>
         <div>
-          <p className="text-sm font-medium">{member.name}</p>
+          <p className="text-sm font-medium">
+            {member.name}{" "}
+            {isMe && (
+              <span className="text-muted-foreground text-xs">(Saya)</span>
+            )}
+          </p>
           <div className="text-muted-foreground flex items-center gap-1 text-[10px]">
             {member.userId ? (
               <>

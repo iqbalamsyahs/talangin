@@ -44,6 +44,9 @@ export default async function GroupSettingsPage({ params }: PageProps) {
   // 3. Ambil List Member
   const members = await db.query.groupMembers.findMany({
     where: eq(groupMembers.groupId, groupId),
+    with: {
+      user: true, // Ambil data user terkait (avatar, email, dll)
+    },
     orderBy: groupMembers.joinedAt,
   });
 
@@ -72,7 +75,7 @@ export default async function GroupSettingsPage({ params }: PageProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <AddMemberModal groupId={groupId} />
+          {isOwner && <AddMemberModal groupId={groupId} />}
 
           <div className="space-y-2">
             {members.map((member) => (
@@ -81,6 +84,7 @@ export default async function GroupSettingsPage({ params }: PageProps) {
                 member={member}
                 groupId={groupId}
                 isOwner={isOwner} // Oper status owner
+                isMe={member.userId === userId}
               />
             ))}
           </div>
